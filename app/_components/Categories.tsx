@@ -23,7 +23,7 @@ const Categories = ({ items, value, onChange }: CategoriesProps) => {
     };
 
     return (
-        <div>
+        <div className="w-100 ml-[100px]">
             <CategoryCard 
                 items={items} 
                 activeId={value} 

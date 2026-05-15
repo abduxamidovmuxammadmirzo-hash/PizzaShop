@@ -1,13 +1,19 @@
+'use client';
 import Image from 'next/image';
-import { HiOutlineShoppingCart } from 'react-icons/hi'; 
-import { RiUserAddLine } from 'react-icons/ri';       
+import Link from 'next/link';
+import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { RiUserAddLine } from 'react-icons/ri';
+import { useCartStore } from '../store/useCartStore';
 
 const Header = () => {
+    const totalCount = useCartStore((state) => state.totalCount);
+    const totalPrice = useCartStore((state) => state.totalPrice);
+
     return (
         <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 ml-[100px]">
             <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition">
                 <Image
-                    src="https://cdn-icons-png.flaticon.com/512/3595/3595455.png" 
+                    src="https://cdn-icons-png.flaticon.com/512/3595/3595455.png"
                     alt="React Pizza Logo"
                     width={32}
                     height={32}
@@ -28,14 +34,14 @@ const Header = () => {
                      <RiUserAddLine size={18} />
                 </button>
 
-                <button className="bg-[#fe5f1e] cursor-pointer hover:bg-[#e24e13] text-white text-sm font-bold py-2 px-5 rounded-full flex items-center gap-3 transition-all active:scale-95 shadow-sm">
-                    <span>540 ₽</span>
+                <Link href="/cart" className="bg-[#fe5f1e] cursor-pointer hover:bg-[#e24e13] text-white text-sm font-bold py-2 px-5 rounded-full flex items-center gap-3 transition-all active:scale-95 shadow-sm">
+                    <span>{totalPrice} ₽</span>
                     <span className="w-[1px] h-4 bg-white/40" />
                     <div className="flex items-center gap-1.5">
                         <HiOutlineShoppingCart size={18} />
-                        <span>3</span>
+                        <span>{totalCount}</span>
                     </div>
-                </button>
+                </Link>
             </div>
         </header>
     );

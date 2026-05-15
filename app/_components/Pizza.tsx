@@ -1,10 +1,9 @@
-'use client'; 
+'use client';
 
 import { useProductStore } from '../store/useProductStore';
-import { PizzaCard } from "./PizzaCard"; 
+import { PizzaCard } from './PizzaCard';
 
 const Pizza = () => {
-    
     const { items, isLoading } = useProductStore();
 
     if (isLoading) return <div className="p-10">Загрузка пицц...</div>;
@@ -14,6 +13,7 @@ const Pizza = () => {
             {items.map((obj) => (
                 <PizzaCard
                     key={obj.id}
+                    id={obj.id}
                     title={obj.title}
                     price={obj.price}
                     imageUrl={obj.imageUrl}

@@ -64,19 +64,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           </li>
         ))}
       </ul>
-
-      <div className="flex items-center gap-1 cursor-pointer group">
-        <b className="text-sm text-[#2c2c2c]">Сортировка по:</b>
-        <span className="text-[#fe5f1e] text-sm border-b border-dashed border-[#fe5f1e] ml-1">
-          популярности
-        </span>
-        <svg 
-          width="10" height="6" viewBox="0 0 10 6" fill="none" 
-          className="text-[#fe5f1e] ml-1 transition-transform group-hover:translate-y-0.5"
-        >
-          <path d="M10 5L5 0L0 5H10Z" fill="currentColor"/>
-        </svg>
-      </div>
     </div>
   );
 };
