@@ -24,15 +24,12 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async (categoryId) => {
     set({ isLoading: true });
     try {
-      // ПРАВКА: проверяем строго на то, что categoryId не undefined и не null
-      // Если ты хочешь, чтобы категория "0" тоже фильтровала, используй проверку !== undefined
       const url = (categoryId !== undefined && categoryId !== 0) 
         ? `/products?category=${categoryId}` 
         : '/products';
       
       const { data } = await api.get(url);
       
-      // Добавляем проверку на наличие data.result, чтобы не упасть, если API вернет ошибку
       set({ items: data.result || [], isLoading: false });
       
       console.log('Запрос выполнен по адресу:', url); // Для отладки

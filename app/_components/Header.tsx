@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi'; 
 import { RiUserAddLine } from 'react-icons/ri';       
 

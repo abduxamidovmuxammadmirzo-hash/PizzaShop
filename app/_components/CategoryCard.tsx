@@ -3,7 +3,6 @@
 import React, { useEffect } from 'react';
 import { useCategoryStore } from '../store/useCategoryStore';
 
-// Определяем, что мы можем передать в компонент
 interface CategoryCardProps {
   items?: { id: string | number; name: string }[];
   activeId?: number;
@@ -15,17 +14,16 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   activeId: propsActiveId, 
   onSelectCategory 
 }) => {
-  // Достаем данные из стора (они будут как запасной вариант)
   const { categories, activeId: storeActiveId, setActiveId, fetchCategories, isLoading } = useCategoryStore();
 
   useEffect(() => {
-    // Грузим категории только если их не передали через пропсы
+    
     if (!items) {
       fetchCategories();
     }
   }, [fetchCategories, items]);
 
-  // Решаем, какие данные использовать: из пропсов или из стора
+  
   const list = items || categories;
   const currentActiveId = propsActiveId !== undefined ? propsActiveId : storeActiveId;
 
@@ -34,7 +32,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       onSelectCategory(typeof categoryId === 'number' ? categoryId : undefined);
     }
 
-    setActiveId(index); // Всегда сохраняем активный индекс для UI
+    setActiveId(index); 
   };
 
   if (isLoading && !items) {
