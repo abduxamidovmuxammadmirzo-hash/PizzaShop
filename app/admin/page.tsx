@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCategoryStore } from '../store/useCategoryStore';
 import { useProductStore } from '../store/useProductStore';
+import { useOrderStore } from '../store/useOrderStore';
 
 const ADMIN_CODE = 'admin';
 
@@ -22,7 +23,7 @@ const AdminPage = () => {
   const [code, setCode] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
-  const [section, setSection] = useState<'products' | 'categories'>('products');
+  const [section, setSection] = useState<'products' | 'categories' | 'orders'>('products');
   const [productForm, setProductForm] = useState(emptyProductForm);
   const [editProductId, setEditProductId] = useState<string | null>(null);
 
@@ -33,6 +34,10 @@ const AdminPage = () => {
   const updateProduct = useProductStore((state) => state.updateProduct);
   const removeProduct = useProductStore((state) => state.removeProduct);
   const fetchCategories = useCategoryStore((state) => state.fetchCategories);
+  
+  const orders = useOrderStore((state) => state.orders);
+  const updateOrderStatus = useOrderStore((state) => state.updateOrderStatus);
+  const removeOrder = useOrderStore((state) => state.removeOrder);
 
   const numericCategories = categories.filter(
     (category): category is { id: number; name: string } => typeof category.id === 'number'
@@ -113,6 +118,22 @@ const AdminPage = () => {
     setSection('products');
   };
 
+  const statusLabels: Record<string, string> = {
+    'new': '🆕 Новый',
+    'preparing': '👨‍🍳 Готовится',
+    'ready': '✅ Готов',
+    'completed': '📦 Завершён',
+    'cancelled': '❌ Отменён',
+  };
+
+  const statusColors: Record<string, string> = {
+    'new': 'bg-blue-100 text-blue-800',
+    'preparing': 'bg-yellow-100 text-yellow-800',
+    'ready': 'bg-green-100 text-green-800',
+    'completed': 'bg-gray-100 text-gray-800',
+    'cancelled': 'bg-red-100 text-red-800',
+  };
+
   const saveCategory = () => {
     // Category CRUD has been disabled — categories managed externally.
   };
@@ -161,6 +182,15 @@ const AdminPage = () => {
                 }`}
               >
                 Продукты
+              </button>
+              <button
+                type="button"
+                onClick={() => setSection('orders')}
+                className={`w-full rounded-3xl px-4 py-3 text-left text-sm font-semibold transition ${
+                  section === 'orders' ? 'bg-[#61dafb] text-white' : 'bg-[#f3f3f3] text-[#282828] hover:bg-[#eaeaea]'
+                }`}
+              >
+                Заказы
               </button>
               <button
                 type="button"
@@ -280,6 +310,104 @@ const AdminPage = () => {
                             >
                               Удалить
                             </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : section === 'orders' ? (
+              <>
+                <div className="rounded-[32px] bg-white p-6 shadow-sm">
+                  <h2 className="text-2xl font-bold mb-4">Заказы</h2>
+                  <div className="space-y-4">
+                    {orders.length === 0 ? (
+                      <div className="rounded-[24px] border border-dashed border-gray-200 p-6 text-center text-gray-500">
+                        Заказов пока нет.
+                      </div>
+                    ) : (
+                      orders.map((order) => (
+                        <div key={order.id} className="rounded-[24px] border border-gray-200 p-4 space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div>
+                              <h3 className="font-bold text-lg">Заказ #{order.id}</h3>
+                              <p className="text-sm text-gray-500">Дата: {order.createdAt}</p>
+                              <p className="text-sm text-gray-500">Клиент: {order.customerName || 'Не указано'}</p>
+                              <p className="text-sm text-gray-500">Телефон: {order.customerPhone || 'Не указано'}</p>
+                            </div>
+                            <span className={`inline-block rounded-full px-4 py-2 text-xs font-semibold ${statusColors[order.status]}`}>
+                              {statusLabels[order.status]}
+                            </span>
+                          </div>
+                          
+                          <div className="border-t pt-3">
+                            <h4 className="text-sm font-semibold mb-2">Товары:</h4>
+                            <div className="space-y-2">
+                              {order.items.map((item, idx) => (
+                                <div key={idx} className="flex justify-between text-sm bg-[#f7f7f7] p-3 rounded-[12px]">
+                                  <div>
+                                    <p className="font-semibold">{item.title}</p>
+                                    <p className="text-gray-600">{item.type}, {item.size} см × {item.quantity} шт</p>
+                                  </div>
+                                  <p className="font-bold text-right">{item.price * item.quantity} ₽</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="border-t pt-3 flex justify-between items-center">
+                            <div>
+                              <p className="text-sm text-gray-500">Сумма</p>
+                              <p className="text-xl font-bold">{order.totalPrice} ₽</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {order.status !== 'completed' && order.status !== 'cancelled' && (
+                                <>
+                                  {order.status === 'new' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => updateOrderStatus(order.id, 'preparing')}
+                                      className="rounded-3xl bg-yellow-100 px-3 py-2 text-xs font-semibold text-yellow-800 hover:bg-yellow-200"
+                                    >
+                                      Готовится
+                                    </button>
+                                  )}
+                                  {(order.status === 'new' || order.status === 'preparing') && (
+                                    <button
+                                      type="button"
+                                      onClick={() => updateOrderStatus(order.id, 'ready')}
+                                      className="rounded-3xl bg-green-100 px-3 py-2 text-xs font-semibold text-green-800 hover:bg-green-200"
+                                    >
+                                      Готов
+                                    </button>
+                                  )}
+                                  {order.status === 'ready' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => updateOrderStatus(order.id, 'completed')}
+                                      className="rounded-3xl bg-blue-100 px-3 py-2 text-xs font-semibold text-blue-800 hover:bg-blue-200"
+                                    >
+                                      Завершить
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                                    className="rounded-3xl bg-red-100 px-3 py-2 text-xs font-semibold text-red-800 hover:bg-red-200"
+                                  >
+                                    Отменить
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => removeOrder(order.id)}
+                                className="rounded-3xl bg-gray-200 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-300"
+                              >
+                                Удалить
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))

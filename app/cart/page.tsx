@@ -2,10 +2,30 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useCartStore } from '../store/useCartStore';
+import { useOrderStore } from '../store/useOrderStore';
 
 const Cart = () => {
   const { items, totalCount, totalPrice, removeFromCart, clearCart } = useCartStore();
+  const { addOrder } = useOrderStore();
+  const [showForm, setShowForm] = useState(false);
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+
+  const handleOrder = () => {
+    if (!customerName.trim() || !customerPhone.trim()) {
+      alert('Пожалуйста, заполните имя и номер телефона');
+      return;
+    }
+
+    addOrder(items, totalPrice, totalCount, customerName.trim(), customerPhone.trim());
+    clearCart();
+    setCustomerName('');
+    setCustomerPhone('');
+    setShowForm(false);
+    alert('Заказ успешно отправлен! Спасибо за покупку!');
+  };
 
   return (
     <div className="container py-8">
@@ -65,16 +85,58 @@ const Cart = () => {
               <div className="text-sm text-gray-500">Сумма заказа</div>
               <div className="text-4xl font-bold">{totalPrice} ₽</div>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                window.alert('Заказ отправлен. Спасибо за заказ!');
-                clearCart();
-              }}
-              className="w-full rounded-3xl bg-[#fe5f1e] py-4 text-sm font-bold text-white hover:bg-[#e24e13] transition"
-            >
-              Заказать 
-            </button>
+
+            {!showForm ? (
+              <button
+                type="button"
+                onClick={() => setShowForm(true)}
+                className="w-full rounded-3xl bg-[#fe5f1e] py-4 text-sm font-bold text-white hover:bg-[#e24e13] transition"
+              >
+                Заказать
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Ваше имя</label>
+                  <input
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Ваше имя"
+                    className="w-full rounded-3xl border border-gray-200 bg-[#f7f7f7] px-4 py-3 text-sm outline-none transition focus:border-[#61dafb] focus:bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Номер телефона</label>
+                  <input
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="Номер телефона"
+                    type="tel"
+                    className="w-full rounded-3xl border border-gray-200 bg-[#f7f7f7] px-4 py-3 text-sm outline-none transition focus:border-[#61dafb] focus:bg-white"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleOrder}
+                    className="flex-1 rounded-3xl bg-[#fe5f1e] py-3 text-sm font-bold text-white hover:bg-[#e24e13] transition"
+                  >
+                    Подтвердить заказ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForm(false);
+                      setCustomerName('');
+                      setCustomerPhone('');
+                    }}
+                    className="flex-1 rounded-3xl bg-gray-200 py-3 text-sm font-bold text-gray-700 hover:bg-gray-300 transition"
+                  >
+                    Отмена
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
