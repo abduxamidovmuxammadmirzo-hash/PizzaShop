@@ -134,9 +134,7 @@ const AdminPage = () => {
     'cancelled': 'bg-red-100 text-red-800',
   };
 
-  const saveCategory = () => {
-    // Category CRUD has been disabled — categories managed externally.
-  };
+
   
 
   return (
@@ -144,8 +142,7 @@ const AdminPage = () => {
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Админ панель</h1>
-          <p className="text-gray-500 mt-2">Здесь доступно управление товарами и категориями. Пароль по умолчанию:</p>
-          <p className="text-sm text-[#4b82f7] font-semibold">admin</p>
+          <p className="text-sm text-[#4b82f7] font-semibold"> Access: admin</p>
         </div>
         <Link href="/" className="text-sm font-semibold text-[#fe5f1e] hover:text-[#d24c11]">
           Вернуться на главную
