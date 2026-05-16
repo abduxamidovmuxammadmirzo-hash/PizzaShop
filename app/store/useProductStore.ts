@@ -16,6 +16,9 @@ interface ProductState {
   items: Product[];
   isLoading: boolean;
   fetchProducts: (categoryId?: number) => Promise<void>;
+  addProduct: (product: Omit<Product, 'id'>) => void;
+  updateProduct: (product: Product) => void;
+  removeProduct: (id: string) => void;
 }
 
 export const useProductStore = create<ProductState>((set) => ({
@@ -37,5 +40,22 @@ export const useProductStore = create<ProductState>((set) => ({
       console.error('Ошибка при загрузке продуктов:', error);
       set({ items: [], isLoading: false });
     }
+  },
+  addProduct: (product) => {
+    set((state) => ({
+      items: [...state.items, { ...product, id: String(Date.now()) }],
+    }));
+  },
+  updateProduct: (product) => {
+    set((state) => ({
+      items: state.items.map((item) =>
+        item.id === product.id ? { ...item, ...product } : item
+      ),
+    }));
+  },
+  removeProduct: (id) => {
+    set((state) => ({
+      items: state.items.filter((item) => item.id !== id),
+    }));
   },
 }));

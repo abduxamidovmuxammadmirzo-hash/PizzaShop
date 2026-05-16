@@ -68,12 +68,12 @@ const Cart = () => {
             <button
               type="button"
               onClick={() => {
-                window.alert('Корзина отправлена. Спасибо за заказ!');
+                window.alert('Заказ отправлен. Спасибо за заказ!');
                 clearCart();
               }}
               className="w-full rounded-3xl bg-[#fe5f1e] py-4 text-sm font-bold text-white hover:bg-[#e24e13] transition"
             >
-              Отправить корзину
+              Заказать 
             </button>
           </div>
         </div>

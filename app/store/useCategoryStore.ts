@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { api } from '../api/api'; 
 
 interface Category {
-  id: number;
+  id: string | number;
   name: string;
 }
 
@@ -40,4 +40,5 @@ fetchCategories: async () => {
     set({ isLoading: false, error: 'Ошибка сети', categories: [] });
   }
 },
+  // Category CRUD disabled — categories are read-only and fetched from API
 }));

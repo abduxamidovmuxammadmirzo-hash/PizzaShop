@@ -30,9 +30,10 @@ const Header = () => {
             </div>
 
             <div className="flex items-center gap-3">
-                <button className="bg-[#61dafb] cursor-pointer hover:bg-[#4bc3e4] text-white text-sm font-bold py-2 px-5 rounded-full transition-all active:scale-95">
+                <Link href="/admin" className="bg-[#61dafb] cursor-pointer hover:bg-[#4bc3e4] text-white text-sm font-bold py-2 px-5 rounded-full transition-all active:scale-95 inline-flex items-center gap-2">
                      <RiUserAddLine size={18} />
-                </button>
+                     <span>Admin</span>
+                </Link>
 
                 <Link href="/cart" className="bg-[#fe5f1e] cursor-pointer hover:bg-[#e24e13] text-white text-sm font-bold py-2 px-5 rounded-full flex items-center gap-3 transition-all active:scale-95 shadow-sm">
                     <span>{totalPrice} ₽</span>
